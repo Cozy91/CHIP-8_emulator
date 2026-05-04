@@ -1,0 +1,47 @@
+#include<cstdint>
+
+class Chip8
+{
+  public:
+    Chip8();
+    uint8_t registers[16]{}; // 16 one byte register  or 16 8-bit registers
+                             
+    uint8_t memory[4096]{}; //4096 bytes for memory (each byte is one space of memory from 0 to 4096, memory is stored in bits)
+
+    uint16_t index{}; //pointer to where data is in memory 
+    uint16_t pc{}; 
+    uint16_t stack[16]{};
+    uint8_t  sp{};
+    uint8_t  delaytimer{};
+    uint8_t  soundTimer{};
+    uint8_t  keypad[16]{};
+    uint32_t video[64*32]{};
+    uint16_t opcode; //instruction 
+    void LoadRom(const char* filename)
+
+  // giving memory to font bytes, each character sprite if of 5 bytes. We need to allocate memory for these bytes- 5 bytes for each character from 0 to F(15)
+
+     const unsigned int FONTSET_SIZE=80; //16*5=80 
+
+     uint8_t font_set[FONTSET_SIZE]= // could have made ab adjacency matrix of 16*5 but memory in Chip8 is 1 bit so ill stick to this 
+   {
+     0xf0, 0x90, 0x90, 0x90, 0xf0, // 0 
+     0x20, 0x60, 0x20, 0x20, 0x70, // 1
+	   0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+     0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+	   0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+	   0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+	   0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+	   0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+	   0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+	   0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+ 	   0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+	   0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+	   0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+	   0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+	   0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+	   0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+   };
+
+
+}
