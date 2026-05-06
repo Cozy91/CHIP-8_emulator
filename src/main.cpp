@@ -28,12 +28,20 @@ void Chip8::LoadRom(char const* filename){
 
 Chip8::CHIP(){
   pc=START_ADDFRESS;
-
+ }
   //loading fonts into memory
   const unsigned int FONT_START_ADDRESS=0X50;
   for(unsigned int i=0;i<FONT_SIZE;++i){
     memory[FONT_START_ADDRESS + i] = font_set[i];
   }
-
+void Chip8::OP_00E0()
+{
+  memset(video,0,sizeof(video)); //clears display 
 }
+
+void Chip8::op_00EE(){
+  --sp; //sp goes to the next address in the stack, below the currently called one 
+  pc=stack[sp];
+}
+
 

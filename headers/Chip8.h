@@ -3,8 +3,11 @@
 class Chip8
 {
   public:
-    Chip8();
-    uint8_t registers[16]{}; // 16 one byte register  or 16 8-bit registers
+    Chip8(); //constructor 
+    OP_00E0();//instruction for clearing display 
+    OP_00EE();//instruction for RET, goes back to where the subroutine was called from 
+  private:
+   uint8_t registers[16]{}; // 16 one byte register  or 16 8-bit registers
                              
     uint8_t memory[4096]{}; //4096 bytes for memory (each byte is one space of memory from 0 to 4096, memory is stored in bits)
 
@@ -21,11 +24,11 @@ class Chip8
 
   // giving memory to font bytes, each character sprite if of 5 bytes. We need to allocate memory for these bytes- 5 bytes for each character from 0 to F(15)
 
-     const unsigned int FONTSET_SIZE=80; //16*5=80 
+    const unsigned int FONTSET_SIZE=80; //16*5=80 
 
-     uint8_t font_set[FONTSET_SIZE]= // could have made ab adjacency matrix of 16*5 but memory in Chip8 is 1 bit so ill stick to this 
+    uint8_t font_set[FONTSET_SIZE]= // could have made ab adjacency matrix of 16*5 but memory in Chip8 is 1 dimensional so ill stick to this 
    {
-     0xf0, 0x90, 0x90, 0x90, 0xf0, // 0 
+     0xf0, 0x90, 0x90, 0x90, 0xf0, // 0,stored as this as to display 0 in screen 
      0x20, 0x60, 0x20, 0x20, 0x70, // 1
 	   0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
      0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
@@ -42,6 +45,4 @@ class Chip8
 	   0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
 	   0xF0, 0x80, 0xF0, 0x80, 0x80  // F
    };
-
-
-}
+  }
