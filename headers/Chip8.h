@@ -4,8 +4,15 @@ class Chip8
 {
   public:
     Chip8(); //constructor 
+             
+    //various opcodes(instructions) :         
+
     OP_00E0();//instruction for clearing display 
-    OP_00EE();//instruction for RET, goes back to where the subroutine was called from 
+    OP_00EE();//instruction for RET, goes back to where the subroutine was called from
+    OP_1nnn(); //insruction for jump addr
+    OP_2nnn(); //insruction for call 
+    OP_3xkk(); // skip if register(Vx)=byte(opcode last two digits)
+    OP_4xkk(); // skip if regisrer!=byte 
   private:
    uint8_t registers[16]{}; // 16 one byte register  or 16 8-bit registers
                              

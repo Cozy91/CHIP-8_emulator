@@ -39,9 +39,34 @@ void Chip8::OP_00E0()
   memset(video,0,sizeof(video)); //clears display 
 }
 
-void Chip8::op_00EE(){
-  --sp; //sp goes to the next address in the stack, below the currently called one 
+void Chip8::OP_00EE(){
+  --sp; // sp goes to the address that was called into the stack (subroutine)
   pc=stack[sp];
 }
+void Chip8::OP_1nnn(){
+  uint16_t address = opcode & 0XFFFFu // anything & 1111 = number itself,seperates the address to where the jump will be done to from the opcode
+  pc=address;
+}
+void Chip8::OP_2nnn(){
+    uint16_t address = opcode & 0XFFFu;
+    stack[sp]=pc; //adds the previous opcode to the top of the stack 
+    sp++;
+    pc=address; //stores the address of the next opcode 
+}
+void OP_3xkk(){
+ uint8_t Vx= (opcode & Ox0F00U) >> 8u; // finding resister number,usually the second digit of the opcode 
+ uint8_t byte=opcode&0x00FFu; // 8 byte because we only need the last two digits of the opcode 
 
+ if(registers[Vx] == byte){
+   pc+=2; //skip
+ }
+}
+void OP_4xkk(){
+  uint8_t Vx= (opcode & 0x0F00u) >> 8u;
+  uint8_t byte= opcode & 0x00FFu;
+
+  if(registers[Vx]!=byte){
+    pc+=2;
+  }
+}
 
