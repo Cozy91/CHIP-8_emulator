@@ -13,6 +13,10 @@ class Chip8
     OP_2nnn(); //insruction for call 
     OP_3xkk(); // skip if register(Vx)=byte(opcode last two digits)
     OP_4xkk(); // skip if regisrer!=byte 
+    OP_5xy(); // skip if vx=vy 
+    OP_6xkk(); //set vx=kk 
+    OP_7xkk(); // set Vx=Vx+kk 
+    OP_8xy(); // set vx=vy 
   private:
    uint8_t registers[16]{}; // 16 one byte register  or 16 8-bit registers
                              

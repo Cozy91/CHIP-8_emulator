@@ -53,7 +53,7 @@ void Chip8::OP_2nnn(){
     sp++;
     pc=address; //stores the address of the next opcode 
 }
-void OP_3xkk(){
+void Chip8::OP_3xkk(){
  uint8_t Vx= (opcode & Ox0F00U) >> 8u; // finding resister number,usually the second digit of the opcode 
  uint8_t byte=opcode&0x00FFu; // 8 byte because we only need the last two digits of the opcode 
 
@@ -61,7 +61,7 @@ void OP_3xkk(){
    pc+=2; //skip
  }
 }
-void OP_4xkk(){
+void Chip8::OP_4xkk(){
   uint8_t Vx= (opcode & 0x0F00u) >> 8u;
   uint8_t byte= opcode & 0x00FFu;
 
@@ -69,4 +69,32 @@ void OP_4xkk(){
     pc+=2;
   }
 }
+void Chip8::OP_5xy(){
+  uint8_t Vx= (opcode & 0x0F00u) >> 8u; //shifts digits by 8 cuz we only need the number of register
+  uint8_t Vy=(opcode & 0x00F0u) >> 4u;
+ if(register[Vx] == register[Vy]){
+   pc+=2;
+ }
+}
+void Chip8::OP_6xkk(){
+  uint8_t Vx= (opcode & 0x0F00U) >> 8u; // 0fuu to extract the register number 
+  uint8_t byte= opcode & 0x00FFu >> 4u;
+  
+  register[Vx] = byte;
+}
+void Chip8::OP_7xkk(){
+  uint8_t Vx= (opcode & 0x0F00u) >> 8u;
+  uint8_t byte=opcode & 0x00FFu;
 
+  register[Vx] += byte;
+}
+void CHIP::OP_8xy(){
+  uint8_t Vx=(opcode & 0x0F00) >> 8u;
+  uint8_t Vy=(opcode & 0x00F0) >> 4u;
+
+  register[Vx] = register[Vy];
+}
+void OP_8xy(){
+  uint8_t Vx = (opcode & 0x0F00) >> 8u;
+  uint8_t Vy = (opcode & 0x00F0) >> 4u; 
+} 
