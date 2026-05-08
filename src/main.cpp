@@ -94,7 +94,34 @@ void CHIP::OP_8xy(){
 
   register[Vx] = register[Vy];
 }
-void OP_8xy(){
+void Chip8::OP_8xy(){
   uint8_t Vx = (opcode & 0x0F00) >> 8u;
   uint8_t Vy = (opcode & 0x00F0) >> 4u; 
+
+  register[Vx] |= register[Vy];
 } 
+void Chip8::OP_8xy2(){
+  uint8_t Vx = (opcode & 0x0F00) >> 8u;
+  uint8_t Vy = (opcode & 0x00F0) >> 4u; 
+ 
+  register[Vx] &= register[Vy];
+}
+void Chip8::OP_8xy3(){
+  uint8_t Vx=(opcode & 0x0F00) >> 8u;
+  uint8_t Vy=(opcode & 0x00F0) >> 4u;
+
+  register[Vx] ^= register[Vy];
+}
+void Chip8::OP_8xy4(){
+  uint8_t Vx=(opcode & 0x0F00) >> 8u;
+  uint8_t Vy=(opcode & 0x00F0) >> 4u;
+  
+  uint16_t sum=register[Vx]+register[Vy];
+  if(sum > 255u){
+    register[0xF]=1;
+  }
+  else{
+    register[OxF]=0;
+  }
+   register[Vx] = sum & 0xFFu;
+}

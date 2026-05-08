@@ -16,7 +16,12 @@ class Chip8
     OP_5xy(); // skip if vx=vy 
     OP_6xkk(); //set vx=kk 
     OP_7xkk(); // set Vx=Vx+kk 
-    OP_8xy(); // set vx=vy 
+    OP_8xy(); // set vx=vy
+    OP_8xy(); // set vx=vx OR vy 
+    OP_8xy2(); // set Vx=Vx and Vy
+    OP_8xy3(); // xor vx vy 
+    OP_8xy4(); //do vx = vx+vy and if the sum is greater than 8 bits,give carry to VF 
+
   private:
    uint8_t registers[16]{}; // 16 one byte register  or 16 8-bit registers
                              
