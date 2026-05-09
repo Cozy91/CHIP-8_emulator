@@ -125,3 +125,42 @@ void Chip8::OP_8xy4(){
   }
    register[Vx] = sum & 0xFFu;
 }
+void Chip8::OP_8xy5(){
+  uint8_t Vx=(opcode & 0x0F00) >> 8u;
+  uint8_t Vy=(opcode & 0x00F0) >> 4u;
+   
+  if(register[Vx] > register[Vy]){
+    register[VF]=1;
+  }
+  else{
+    register[VF]=0;
+  }
+  register[Vx] -= register[Vy]
+}
+void Chip8::OP_8xy6(){
+  uint8_t Vx=(opcode & 0x0F00) >> 8u;
+  
+  register[VF] = register[Vx] & 0x0001u; //to find the lsb because the shift operation destroys it
+  register[Vx] >>=1u;
+}
+
+void chip8::op_8xy7(){
+  uint8_t vx=(opcode & 0x0f00) >> 8u;
+  uint8_t vy=(opcode & 0x00f0) >> 4u;
+   
+  if(register[Vy] > register[Vx]){
+    register[VF]=1;
+  }
+  else{
+    register[VF] = 0;
+  }
+  register[Vx] = register[Vy] - register[Vy];
+}
+void chip8::op_8xy7(){
+  uint8_t vx=(opcode & 0x0f00) >> 8u;
+  register[VF] =  opcode & 0x1000; // storing msb 
+  
+  register[Vx] <<=2; //left shift 
+}
+
+
