@@ -29,6 +29,10 @@ class Chip8
     OP_Annn(); // setting index to the current address
     OP_Bnnn(); //jump to location nnn
     OP_Dxyn(); // disaplay instruction 
+    OP_Ex9E(); //skip if key pressed is the value in vx
+    OP_ExA1(); //skip if key pressed is not the value in vx
+    OP_Fx07(); //set delay time=value in vx,get timer 
+    OP_Fx0A(); //wait for key press,store the value in the key in vx;
   private:
    uint8_t registers[16]{}; // 16 one byte register  or 16 8-bit registers
                              

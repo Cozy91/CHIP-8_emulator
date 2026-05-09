@@ -180,7 +180,7 @@ pc=register[0]+hello;
 void Chip8::OP_Dxyn(){
 uint8_t Vx=(opcode & 0x0F00u) >> 8u;
 uint8_t Vy=(opcode & 0x00F0n) >> 4u;
-uint8_t height = opcode & 0x000Fu;
+uint8_t height = opcode & 0x000Fu; //video_width is 64 here 
 
 uint8_t xPos=register[Vx] % VIDEO_WIDTH; //for out of boundary conditions
 uint8_t yPos=register[Vy] % VIDEO_WIDTH; //yPos is where it starts drawing 
@@ -207,4 +207,42 @@ register[0xF]=0 // 1 if collision of new sprite and sprite on displsy,otherwise 
        }
      }
   }
+} 
+void  Chip8::OP_Ex9E(){
+  uint8_t Vx= (opcode & 0x0F00) >> 8u;
+  uint8_t key=register[Vx];
+
+  if[keypad[key]]{
+    pc +=2;
+  }
 }
+void Chip8::OP_ExA1{
+  uint8_t Vx= (opcode & 0x0F00u) >> 8u;
+  uint8_t key=register[vx];
+  
+  if(!keypad[key]){
+    pc +=2;
+  }
+}
+void Chip8::Fx07(){
+  uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+  register[Vx] = delayTimer;
+}
+void Chip8::Fx0A(){
+     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+     bool keypressed=false;
+
+     for(int i=0; i<16; i++){
+       if(keypad[i]){
+         register[Vx]=i;
+         keypressed = true;
+         break;
+       }
+     }
+     if(!kepressed){
+       pc -= 2;
+     }
+}
+
+
+
