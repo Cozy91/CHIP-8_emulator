@@ -28,7 +28,7 @@ class Chip8
     OP_8xyE(); //skip next instruction if vx!=vy 
     OP_Annn(); // setting index to the current address
     OP_Bnnn(); //jump to location nnn
-
+    OP_Dxyn(); // disaplay instruction 
   private:
    uint8_t registers[16]{}; // 16 one byte register  or 16 8-bit registers
                              
