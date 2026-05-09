@@ -1,4 +1,3 @@
-// function to load the contents of the ROM file
 #include<fsteam>
 #include<members.h>
 using namespace std;
@@ -144,9 +143,9 @@ void Chip8::OP_8xy6(){
   register[Vx] >>=1u;
 }
 
-void chip8::op_8xy7(){
-  uint8_t vx=(opcode & 0x0f00) >> 8u;
-  uint8_t vy=(opcode & 0x00f0) >> 4u;
+void Chip8::OP_8xy7(){
+  uint8_t Vx=(opcode & 0x0f00) >> 8u;
+  uint8_t Vy=(opcode & 0x00f0) >> 4u;
    
   if(register[Vy] > register[Vx]){
     register[VF]=1;
@@ -156,11 +155,27 @@ void chip8::op_8xy7(){
   }
   register[Vx] = register[Vy] - register[Vy];
 }
-void chip8::op_8xy7(){
-  uint8_t vx=(opcode & 0x0f00) >> 8u;
+void Chip8::OP_8xyE(){
+  uint8_t Vx=(opcode & 0x0f00) >> 8u;
   register[VF] =  opcode & 0x1000; // storing msb 
   
   register[Vx] <<=2; //left shift 
 }
+void Chip8::OP_8xy7(){
+  uint8_t Vx=(opcode & 0x0f00) >> 8u;
+  uint8_t Vy= (opcode & 0x0f00) >> 4u;
 
+  if(register[Vx] != register[Vy]){
+    pc += 2;
+  }
+}
+void OP_Annn(){
+ uint16_t address = opcode & 0x0FFFu // last 12 bits 
+ index=addresss; 
+}
+void Chip8::Bnnn(){
+  uint16_t Hello=opcode & 0x0FFFu; //HELLO IS ADDRESS I WAS BORED
+
+  pc=register[0]+hello;
+}
 

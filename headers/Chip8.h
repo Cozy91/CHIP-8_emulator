@@ -22,8 +22,13 @@ class Chip8
     OP_8xy3(); // xor vx vy 
     OP_8xy4(); //do vx = vx+vy and if the sum is greater than 8 bits,give carry to VF 
     OP_8xy5(); // sub vx,vy  
-    OP_8xy6(); // shifting of pixels basically 
+    OP_8xy6(); // shifting of pixels basically, lsb method
     OP_8xy7(); // sub vy,vx
+    OP_8xyE(); //msb method
+    OP_8xyE(); //skip next instruction if vx!=vy 
+    OP_Annn(); // setting index to the current address
+    OP_Bnnn(); //jump to location nnn
+
   private:
    uint8_t registers[16]{}; // 16 one byte register  or 16 8-bit registers
                              
@@ -36,7 +41,7 @@ class Chip8
     uint8_t  delaytimer{};
     uint8_t  soundTimer{};
     uint8_t  keypad[16]{};
-    uint32_t video[64*32]{};
+    uint32_t VIDEO[64*32]{};
     uint16_t opcode; //instruction 
     void LoadRom(const char* filename)
 
