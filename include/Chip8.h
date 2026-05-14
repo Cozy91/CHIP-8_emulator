@@ -37,6 +37,9 @@ class Chip8
     OP_Fx18(); // set soundTimer=Vx;
     OP_Fx1E(); // set index I = I+Vx;
     OP_Fx29(); // index=location of sprite for digit Vx
+    OP_Fx33(); // stores bcd of Vx with 100th,tens,ones at I,I+1 and I+2
+    OP_Fx55(); // stores registers from V0 to Vx
+    OP_Fx65(); // fills registers V0 to Vx with values from memory 
   private:
    uint8_t registers[16]{}; // 16 one byte register  or 16 8-bit registers
                              

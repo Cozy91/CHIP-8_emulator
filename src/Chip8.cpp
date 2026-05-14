@@ -258,7 +258,29 @@ void OP_Fx1E(){
 void OP_Fx29(){
   uint8_t Vx=(opcode & 0x0F00u) >> 8u;
 
-  index=FONT_START_ADDRESS + 5*(register[Vx]) // fonts are 5 bytes each, index is now at the starting byte of the number in Vx
+  index=FONT_START_ADDRESS + 5*(register[Vx]) // fonts are 5 bytes each, index is now at the starting byte of the number in Vx  
+
+void OP_Fx33(){
+  uint8_t Vx=(opcode & 0x0F00u) >> 8u;
+  int digit = register[Vx];
+
+  memory[index] = digit%10;
+  digit /= 10;
+   
+  memory[index+1] = digit%10;
+  digit /= 10;
+
+  memory[index+2] = digit%10;
+  digit /= 10;
+} 
+void OP_Fx55(){  
+  for(int i=0;i<=X;i++){
+    memory[index+0] = V[i];
+  }
 }
+void OP_Fx65(){
+    (int i=0;i<=X;i++){
+     register[Vx]
+  }
 
-
+}
