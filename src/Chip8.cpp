@@ -179,22 +179,22 @@ pc=register[0]+hello;
 }
 void Chip8::OP_Dxyn(){
 uint8_t Vx=(opcode & 0x0F00u) >> 8u;
-uint8_t Vy=(opcode & 0x00F0n) >> 4u;
+uint8_t Vy=(opcode & 0x00F0u) >> 4u;
 uint8_t height = opcode & 0x000Fu; //video_width is 64 here 
 
 uint8_t xPos=register[Vx] % VIDEO_WIDTH; //for out of boundary conditions
-uint8_t yPos=register[Vy] % VIDEO_WIDTH; //yPos is where it starts drawing 
+uint8_t yPos=register[Vy] % VIDEO_HEIGHT; //yPos is where it starts drawing 
 
-register[0xF]=0 // 1 if collision of new sprite and sprite on displsy,otherwise 0 
+register[0xF]=0; // 1 if collision of new sprite and sprite on displsy,otherwise 0 
     
   for(unsigned int row=0;row<height;row++){ //iterating through sprite rows 
      uint8_t spriteByte=memory[index+row]; //byte data of the row 
      for(unsigned int col=0;col<8;col++){
 
-       uint8_t spritePixel=spriteByte & (0x8u >> col); //extracts column one by one 
+       uint8_t spritePixel=spriteByte & (0x80u >> col); //extracts column one by one 
 
        //pointer to the current row and column we are in 
-       uint32_t* screenPixel=&video[(yPos+row)*VIDEO_WIDTH,(xPos+col)];
+       uint32_t* screenPixel=&video[(yPos+row)*VIDEO_WIDTH+(xPos+col)];
        
 
        if(spritePixel){ //spritePixel is on 
@@ -202,7 +202,7 @@ register[0xF]=0 // 1 if collision of new sprite and sprite on displsy,otherwise 
          if(*screenPixel == 0xFFFFFFFF){ // screenPixel is also on 
            register[0xFu]=1; // collision condition 
          }
-         screenPixel ^=0xFFFFFFFF; //spritepixel is just one bit (eg 100000000), screenpixel can only be either FFFFFFFF or 00000000 
+         *screenPixel ^= 0xFFFFFFFF; //spritepixel is just one bit (eg 100000000), screenpixel can only be either FFFFFFFF or 00000000. If spritePixel is 1,flip the screenpixel
                                    //xor makes it so if both are on it will display nothing 
        }
      }
@@ -240,7 +240,7 @@ void Chip8::Fx0A(){
        }
      }
      if(!kepressed){
-       pc -= 2;
+       pc -= 2; //to wait for a key press 
      }
 }
 
