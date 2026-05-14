@@ -243,6 +243,22 @@ void Chip8::Fx0A(){
        pc -= 2; //to wait for a key press 
      }
 }
+void OP_Fx15(){
+  uint8_t Vx= (opcode & 0x0F00u) >> 8u;
+  delayTimer=register[Vx];
+}
+void OP_Fx18(){
+  uint8_t Vx=(opcode & 0x0F00u) >> 8u;
+  soundTimer=register[Vx];
+}
+void OP_Fx1E(){
+  uint8_t Vx=(opcode & 0x0F00u) >> 8u;
+  index += register[Vx];
+}
+void OP_Fx29(){
+  uint8_t Vx=(opcode & 0x0F00u) >> 8u;
 
+  index=FONT_START_ADDRESS + 5*(register[Vx]) // fonts are 5 bytes each, index is now at the starting byte of the number in Vx
+}
 
 
