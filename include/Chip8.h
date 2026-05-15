@@ -80,6 +80,13 @@ class Chip8
 	   0xF0, 0x80, 0xF0, 0x80, 0x80  // F
    };
   }
-void Chip8::*table[16](); // function pointers to the opcode functions we have to use void cuz the functions we are using thes pointers for thenselves return void
-                          
+
+typedef void Chip8::*Chip8Func() //okay so Chip8Func is basically a pointer to a member function of Chip8
+
 //making a master table where every function pointer will point to a function that indexes corectly based on the relevant parts of the opcode. Ex we'll make a seperate table for all the functions startin from 8xy and then store a function pointer to that table in this master table. This will be a 1d table 
+// first we will create like tables to store the addresses of the opcode functions that are similar like 0x000E and 0x00EE 
+ Chip8Func table[0xFu +1]; // master table, array of pointers to member functions and some tables 
+Chip8func table0[0xEu +1]; //000E and 00EE
+Chip8Func table8[0xEu +1]; // opcodes starting from 8xy
+Chip8Func tableE[0xEu +1]; // opcode with Ex
+Chip8Func tableF[065u +1]; // opcodes starting with F, they end with 07,0A . . . goes upto max 65 so array has 65+1
