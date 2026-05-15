@@ -13,7 +13,7 @@ class Chip8
     OP_2nnn(); //insruction for call 
     OP_3xkk(); // skip if register(Vx)=byte(opcode last two digits)
     OP_4xkk(); // skip if regisrer!=byte 
-    OP_5xy(); // skip if vx=vy 
+    OP_5xy0(); // skip if vx=vy 
     OP_6xkk(); //set vx=kk 
     OP_7xkk(); // set Vx=Vx+kk 
     OP_8xy(); // set vx=vy
@@ -25,7 +25,7 @@ class Chip8
     OP_8xy6(); // shifting of pixels basically, lsb method
     OP_8xy7(); // sub vy,vx
     OP_8xyE(); //msb method
-    OP_8xyE(); //skip next instruction if vx!=vy 
+    OP_9xy0(); //skip next instruction if vx!=vy 
     OP_Annn(); // setting index to the current address
     OP_Bnnn(); //jump to location nnn
     OP_Dxyn(); // disaplay instruction 
@@ -39,7 +39,7 @@ class Chip8
     OP_Fx29(); // index=location of sprite for digit Vx
     OP_Fx33(); // stores bcd of Vx with 100th,tens,ones at I,I+1 and I+2
     OP_Fx55(); // stores registers from V0 to Vx
-    OP_Fx65(); // fills registers V0 to Vx with values from memory 
+    OP_Fx65(); // fills registers V0 to Vx with values from memory
   private:
    uint8_t registers[16]{}; // 16 one byte register  or 16 8-bit registers
                              
@@ -80,3 +80,6 @@ class Chip8
 	   0xF0, 0x80, 0xF0, 0x80, 0x80  // F
    };
   }
+void Chip8::*table[16](); // function pointers to the opcode functions we have to use void cuz the functions we are using thes pointers for thenselves return void
+                          
+//making a master table where every function pointer will point to a function that indexes corectly based on the relevant parts of the opcode. Ex we'll make a seperate table for all the functions startin from 8xy and then store a function pointer to that table in this master table. This will be a 1d table 

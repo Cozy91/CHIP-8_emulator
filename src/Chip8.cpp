@@ -68,7 +68,7 @@ void Chip8::OP_4xkk(){
     pc+=2;
   }
 }
-void Chip8::OP_5xy(){
+void Chip8::OP_5xy0(){
   uint8_t Vx= (opcode & 0x0F00u) >> 8u; //shifts digits by 8 cuz we only need the number of register
   uint8_t Vy=(opcode & 0x00F0u) >> 4u;
  if(register[Vx] == register[Vy]){
@@ -161,7 +161,7 @@ void Chip8::OP_8xyE(){
   
   register[Vx] <<=2; //left shift 
 }
-void Chip8::OP_8xy7(){
+void Chip8::OP_9xy0(){
   uint8_t Vx=(opcode & 0x0f00) >> 8u;
   uint8_t Vy= (opcode & 0x0f00) >> 4u;
 
@@ -264,23 +264,26 @@ void OP_Fx33(){
   uint8_t Vx=(opcode & 0x0F00u) >> 8u;
   int digit = register[Vx];
 
-  memory[index] = digit%10;
+  memory[index+2] = digit%10;
   digit /= 10;
    
   memory[index+1] = digit%10;
   digit /= 10;
 
-  memory[index+2] = digit%10;
+  memory[index] = digit%10;
   digit /= 10;
 } 
-void OP_Fx55(){  
-  for(int i=0;i<=X;i++){
-    memory[index+0] = V[i];
+void OP_Fx55(){ 
+  uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+  for(int i=0;i<=Vx;i++){
+    memory[index+0] = register[i];
   }
 }
 void OP_Fx65(){
-    (int i=0;i<=X;i++){
-     register[Vx]
+   uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+
+    for(int i=0;i<=Vx;i++){
+     register[i] = memory[index+i];
   }
 
 }
