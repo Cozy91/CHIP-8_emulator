@@ -87,13 +87,13 @@ void Chip8::OP_7xkk(){
 
   register[Vx] += byte;
 }
-void CHIP::OP_8xy(){
+void CHIP::OP_8xy0(){
   uint8_t Vx=(opcode & 0x0F00) >> 8u;
   uint8_t Vy=(opcode & 0x00F0) >> 4u;
 
   register[Vx] = register[Vy];
 }
-void Chip8::OP_8xy(){
+void Chip8::OP_8xy1(){
   uint8_t Vx = (opcode & 0x0F00) >> 8u;
   uint8_t Vy = (opcode & 0x00F0) >> 4u; 
 
@@ -176,6 +176,13 @@ void Chip8::OP_Annn(){
 void Chip8::Bnnn(){
 uint16_t Hello=opcode & 0x0FFFu; //HELLO IS ADDRESS I WAS BORED
 pc=register[0]+hello;
+}
+void Chip8::OP_Cxkk()
+{
+	uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+	uint8_t byte = opcode & 0x00FFu;
+
+	registers[Vx] = randByte(randGen) & byte;
 }
 void Chip8::OP_Dxyn(){
 uint8_t Vx=(opcode & 0x0F00u) >> 8u;
