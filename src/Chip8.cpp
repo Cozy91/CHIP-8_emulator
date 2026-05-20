@@ -1,7 +1,6 @@
 #include<fsteam>
-#include<members.h>
+#include
 using namespace std;
-
 const unsigned int START_ADDFRESS=0x200;
 
 void Chip8::LoadRom(char const* filename){
@@ -23,6 +22,11 @@ void Chip8::LoadRom(char const* filename){
      }
      delete[buffer];
    }
+}
+Chip8::Chip8()
+    : randGen(std::chrono::system_clock::now().time_since_epoch().count())
+{
+    randByte = std::uniform_int_distribution<uint8_t>(0, 255U);
 }
 
 Chip8::CHIP(){
@@ -294,4 +298,22 @@ void OP_Fx65(){
   }
 
 }
+
+
+void Chip8::cycle(){
+  //fetch 
+  opcode=(memory[pc] << 8u) | memory[pc+1]; //opcode is of 16 bytes  
+  pc +=2;
+
+  ((*this).*(table[(opcode & OxF000u)>>12u]))(); //decodes and executes
+
+  if(delayTimer>0){ // decrement delayTimer if its already set
+    --delayTimer;
+  }
+
+  if(soundTimer>0){
+    --soundTimer;
+  }
+}
+
 
