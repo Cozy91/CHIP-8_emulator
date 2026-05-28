@@ -22,7 +22,7 @@ void Chip8::LoadRom(char const* filename){
        memory[START_ADDFRESS+i] = buffer[i];
      }
      delete[buffer];
-   }
+    }
 }
 Chip8::Chip8()
     : randGen(std::chrono::system_clock::now().time_since_epoch().count())

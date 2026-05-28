@@ -16,7 +16,7 @@ Platform platform("CHIP-8 Emulator",VIDEO_WIDTH*videoScale,VIDEO_HEIGHT*videoSca
 Chip8 chip8;
 chip8.LoadRom(romFilename);
 
-int videoPitch = sizeof(chip8.video[0] * VIDEO_WIDTH); //basically to find the size of onerow or where the next row is located
+int videoPitch = sizeof(chip8.VIDEO[0] * VIDEO_WIDTH); //basically to find the size of onerow or where the next row is located
 auto lastCycleTime=std::chrono::high_resolution_clock::now();
 bool quit=false;
 
