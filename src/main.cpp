@@ -1,7 +1,7 @@
-#include<../include/Chip8.h>
+#include "../include/Chip8.h"
 #include<chrono>
 #include<cstdlib>
-#include<iostream.h>
+#include<iostream>
 
 
 int main(int argc,char* argv[]){ //no of arguments and storing those arguments in an array (scale,delay,filename)
@@ -30,7 +30,6 @@ if(dt>cycleDelay){
   lastCycleTime=currentTime; // updates the time to the time when last cycle completed its execution
   platform.cycle();
   platform.update(chip8.video,videoPitch);
-
   }
 }
  } 
