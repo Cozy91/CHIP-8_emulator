@@ -82,13 +82,28 @@ tableF[0x33] = &Chip8::OP_Fx33;
 tableF[0x55] = &Chip8::OP_Fx55;
 tableF[0x65] = &Chip8::OP_Fx65;
 pc=START_ADDRESS;
-
   //loading fonts into memory
   const unsigned int FONT_START_ADDRESS=0X50;
   for(unsigned int i=0;i<FONTSET_SIZE;++i){
     memory[FONT_START_ADDRESS + i] = font_set[i];
   }
 }
+
+void Chip8::OP_NULL(){}
+
+void Chip8::Table0(){
+  ((*this).*table0[opcode & 0x000Fu])(); //deferencing the object then indexing the opcode we want 
+}
+void Chip8::Table8(){
+  ((*this).*table8[opcode & 0x000Fu])();
+}
+void Chip8::TableE(){
+  ((*this).*tableE[opcode & 0x000Fu])();
+}
+void Chip8::TableF(){
+  ((*this).*tableE[opcode & 0x00FFu])();
+}
+
 void Chip8::OP_00E0()
 {
   memset(VIDEO,0,sizeof(VIDEO)); //clears display 
