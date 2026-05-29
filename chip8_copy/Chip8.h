@@ -4,6 +4,7 @@
 #include <SDL3/SDL.h>
 const unsigned int VIDEO_WIDTH = 64;
 const unsigned int VIDEO_HEIGHT = 32;
+const unsigned int FONT_START_ADDRESS = 0x50;
 class Chip8
 {
   public:
@@ -106,6 +107,7 @@ Chip8Func tableF[065u +1]; // opcodes starting with F, they end with 07,0A . . .
 	   0xF0, 0x80, 0xF0, 0x80, 0x80  // F
    };
   };
+
 void Chip8::OP_NULL(){}
 
 Chip8::Chip8(){
@@ -133,11 +135,11 @@ for(size_t i=0;i<=0xE;i++){
   tableE[i] = &Chip8::OP_NULL;
 }
 table0[0x0] = &Chip8::OP_00E0;
-table[0xE] =  &Chip8::OP_00EE;
+table0[0xE] =  &Chip8::OP_00EE;
 
 table8[0x0] = &Chip8::OP_8xy0;
 table8[0x1] = &Chip8::OP_8xy1;
-table8[0x2] = &Chip8::OP_8xy3;
+table8[0x2] = &Chip8::OP_8xy2;
 table8[0x3] = &Chip8::OP_8xy3;
 table8[0x4] = &Chip8::OP_8xy4;
 table8[0x5] = &Chip8::OP_8xy5;
@@ -161,7 +163,7 @@ tableF[0x29] = &Chip8::OP_Fx29;
 tableF[0x33] = &Chip8::OP_Fx33;
 tableF[0x55] = &Chip8::OP_Fx55;
 tableF[0x65] = &Chip8::OP_Fx65;
-};
+}
 
 void Chip8::Table0(){
   ((*this).*table0[opcode & 0x000Fu])(); //deferencing the object then indexing the opcode we want 
@@ -173,7 +175,7 @@ void Chip8::TableE(){
   ((*this).*tableE[opcode & 0x000Fu])();
 }
 void Chip8::TableF(){
-  ((*this).*tableE[opcode & 0x00FFu])();
+  ((*this).*tableF[opcode & 0x00FFu])();
 }
 //void OP_NULL(){}
  /*Chip8::Chip8(){
@@ -452,5 +454,3 @@ SDL_Window* window{};
 SDL_Renderer* renderer{};
 SDL_Texture* texture{};
 };
-
-

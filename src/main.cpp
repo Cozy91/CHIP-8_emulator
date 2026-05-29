@@ -28,8 +28,8 @@ while(!quit){
 
 if(dt>cycleDelay){
   lastCycleTime=currentTime; // updates the time to the time when last cycle completed its execution
-  platform.cycle();
-  platform.update(chip8.video,videoPitch);
-  }
+  chip8.cycle();
+  platform.update(chip8.VIDEO,videoPitch);
+ }
 }
  } 
