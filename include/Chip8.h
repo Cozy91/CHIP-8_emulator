@@ -108,7 +108,7 @@ Chip8Func tableF[065u +1]; // opcodes starting with F, they end with 07,0A . . .
   };
 void Chip8::OP_NULL(){}
 
-Chip8::Chip8(){
+/*Chip8::Chip8(){
 
 table[0x0] = &Chip8::Table0; //addresses of various member functions 
 table[0x1] = &Chip8::OP_1nnn;
@@ -161,7 +161,7 @@ tableF[0x29] = &Chip8::OP_Fx29;
 tableF[0x33] = &Chip8::OP_Fx33;
 tableF[0x55] = &Chip8::OP_Fx55;
 tableF[0x65] = &Chip8::OP_Fx65;
-};
+};*/
 
 void Chip8::Table0(){
   ((*this).*table0[opcode & 0x000Fu])(); //deferencing the object then indexing the opcode we want 
