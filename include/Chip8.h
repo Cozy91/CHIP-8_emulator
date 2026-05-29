@@ -106,7 +106,7 @@ Chip8Func tableF[065u +1]; // opcodes starting with F, they end with 07,0A . . .
 	   0xF0, 0x80, 0xF0, 0x80, 0x80  // F
    };
   };
-void Chip8::OP_NULL(){}
+
 
 /*Chip8::Chip8(){
 
@@ -162,7 +162,7 @@ tableF[0x33] = &Chip8::OP_Fx33;
 tableF[0x55] = &Chip8::OP_Fx55;
 tableF[0x65] = &Chip8::OP_Fx65;
 };*/
-
+/*
 void Chip8::Table0(){
   ((*this).*table0[opcode & 0x000Fu])(); //deferencing the object then indexing the opcode we want 
 }
@@ -175,6 +175,7 @@ void Chip8::TableE(){
 void Chip8::TableF(){
   ((*this).*tableE[opcode & 0x00FFu])();
 }
+*/
 //void OP_NULL(){}
  /*Chip8::Chip8(){
  Chip8Func table[0xFu +1]; // master table, array of pointers to member functions and some tables 
@@ -443,9 +444,11 @@ case SDL_EVENT_KEY_UP:
 							keys[0xF] = 0;
 						} break; //copy pasted this case too
         }
-} return quit;
+} 
 }
 }
+return quit;
+
 }
 private:
 SDL_Window* window{};
