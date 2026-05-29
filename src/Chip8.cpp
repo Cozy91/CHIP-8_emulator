@@ -29,19 +29,73 @@ Chip8::Chip8()
     : randGen(std::chrono::system_clock::now().time_since_epoch().count())
 {
     randByte = std::uniform_int_distribution<uint8_t>(0, 255U);
+
+
+table[0x0] = &Chip8::Table0; //addresses of various member functions 
+table[0x1] = &Chip8::OP_1nnn;
+table[0x2] = &Chip8::OP_2nnn;
+table[0x3] = &Chip8::OP_3xkk;
+table[0x4] = &Chip8::OP_4xkk;
+table[0x5] = &Chip8::OP_5xy0;
+table[0x6] = &Chip8::OP_6xkk;
+table[0x7] = &Chip8::OP_7xkk;
+table[0x8] = &Chip8::Table8;
+table[0x9] = &Chip8::OP_9xy0;
+table[0xA] = &Chip8::OP_Annn;
+table[0xB] = &Chip8::OP_Bnnn;
+table[0xC] = &Chip8::OP_Cxkk;
+table[0xD] = &Chip8::OP_Dxyn;
+table[0xE] = &Chip8::TableE;
+table[0xF] = &Chip8::TableF;  
+
+for(size_t i=0;i<=0xE;i++){
+  table0[i] = &Chip8::OP_NULL; //this is the subtable containing 000E and 00EE 
+  table8[i] = &Chip8::OP_NULL;
+  tableE[i] = &Chip8::OP_NULL;
+}
+table0[0x0] = &Chip8::OP_00E0;
+table[0xE] =  &Chip8::OP_00EE;
+
+table8[0x0] = &Chip8::OP_8xy0;
+table8[0x1] = &Chip8::OP_8xy1;
+table8[0x2] = &Chip8::OP_8xy3;
+table8[0x3] = &Chip8::OP_8xy3;
+table8[0x4] = &Chip8::OP_8xy4;
+table8[0x5] = &Chip8::OP_8xy5;
+table8[0x6] = &Chip8::OP_8xy6;
+table8[0x7] = &Chip8::OP_8xy7;
+table8[0xE] = &Chip8::OP_8xyE;
+
+tableE[0x1] = &Chip8::OP_ExA1;
+tableE[0xE] = &Chip8::OP_Ex9E;
+
+for (size_t i = 0; i <= 0x65; i++) // we are basically filling them with null function as default
+{
+			tableF[i] = &Chip8::OP_NULL;
+}
+tableF[0x07] = &Chip8::OP_Fx07;
+tableF[0x0A] = &Chip8::OP_Fx0A;
+tableF[0x15] = &Chip8::OP_Fx15;
+tableF[0x18] = &Chip8::OP_Fx18;
+tableF[0x1E] = &Chip8::OP_Fx1E;
+tableF[0x29] = &Chip8::OP_Fx29;
+tableF[0x33] = &Chip8::OP_Fx33;
+tableF[0x55] = &Chip8::OP_Fx55;
+tableF[0x65] = &Chip8::OP_Fx65;
 }
 
 Chip8::CHIP(){
   pc=START_ADDFRESS;
+  
  }
   //loading fonts into memory
   const unsigned int FONT_START_ADDRESS=0X50;
-  for(unsigned int i=0;i<FONT_SIZE;++i){
+   for(unsigned int i=0;i<FONTSET_SIZE;++i){
     memory[FONT_START_ADDRESS + i] = font_set[i];
   }
 void Chip8::OP_00E0()
 {
-  memset(video,0,sizeof(video)); //clears display 
+  memset(VIDEO,0,sizeof(VIDEO)); //clears display 
 }
 
 void Chip8::OP_00EE(){
@@ -57,12 +111,11 @@ void Chip8::OP_2nnn(){
     stack[sp]=pc; //adds the previous opcode to the top of the stack 
     sp++;
     pc=address; //stores the address of the next opcode 
-}
-void Chip8::OP_3xkk(){
- uint8_t Vx= (opcode & Ox0F00U) >> 8u; // finding resister number,usually the second digit of the opcode 
+} void Chip8::OP_3xkk(){
+ uint8_t Vx= (opcode & 0x0F00U) >> 8u; // finding resister number,usually the second digit of the opcode 
  uint8_t byte=opcode&0x00FFu; // 8 byte because we only need the last two digits of the opcode 
 
- if(registers[Vx] == byte){
+ if(registerss[Vx] == byte){
    pc+=2; //skip
  }
 }
@@ -70,108 +123,108 @@ void Chip8::OP_4xkk(){
   uint8_t Vx= (opcode & 0x0F00u) >> 8u;
   uint8_t byte= opcode & 0x00FFu;
 
-  if(registers[Vx]!=byte){
+  if(registerss[Vx]!=byte){
     pc+=2;
   }
 }
 void Chip8::OP_5xy0(){
-  uint8_t Vx= (opcode & 0x0F00u) >> 8u; //shifts digits by 8 cuz we only need the number of register
+  uint8_t Vx= (opcode & 0x0F00u) >> 8u; //shifts digits by 8 cuz we only need the number of registers
   uint8_t Vy=(opcode & 0x00F0u) >> 4u;
- if(register[Vx] == register[Vy]){
+ if(registers[Vx] == register[Vy]){
    pc+=2;
  }
 }
 void Chip8::OP_6xkk(){
-  uint8_t Vx= (opcode & 0x0F00U) >> 8u; // 0fuu to extract the register number 
+  uint8_t Vx= (opcode & 0x0F00U) >> 8u; // 0fuu to extract the registers number 
   uint8_t byte= opcode & 0x00FFu >> 4u;
   
-  register[Vx] = byte;
+  registers[Vx] = byte;
 }
 void Chip8::OP_7xkk(){
   uint8_t Vx= (opcode & 0x0F00u) >> 8u;
   uint8_t byte=opcode & 0x00FFu;
 
-  register[Vx] += byte;
+  registers[Vx] += byte;
 }
-void CHIP::OP_8xy0(){
+void Chip8::OP_8xy0(){
   uint8_t Vx=(opcode & 0x0F00) >> 8u;
   uint8_t Vy=(opcode & 0x00F0) >> 4u;
 
-  register[Vx] = register[Vy];
+  registers[Vx] = register[Vy];
 }
 void Chip8::OP_8xy1(){
   uint8_t Vx = (opcode & 0x0F00) >> 8u;
   uint8_t Vy = (opcode & 0x00F0) >> 4u; 
 
-  register[Vx] |= register[Vy];
+  registers[Vx] |= register[Vy];
 } 
 void Chip8::OP_8xy2(){
   uint8_t Vx = (opcode & 0x0F00) >> 8u;
   uint8_t Vy = (opcode & 0x00F0) >> 4u; 
  
-  register[Vx] &= register[Vy];
+  registers[Vx] &= register[Vy];
 }
 void Chip8::OP_8xy3(){
   uint8_t Vx=(opcode & 0x0F00) >> 8u;
   uint8_t Vy=(opcode & 0x00F0) >> 4u;
 
-  register[Vx] ^= register[Vy];
+  registers[Vx] ^= register[Vy];
 }
 void Chip8::OP_8xy4(){
   uint8_t Vx=(opcode & 0x0F00) >> 8u;
   uint8_t Vy=(opcode & 0x00F0) >> 4u;
   
-  uint16_t sum=register[Vx]+register[Vy];
+  uint16_t sum=registers[Vx]+register[Vy];
   if(sum > 255u){
-    register[0xF]=1;
+    registers[0xF]=1;
   }
   else{
-    register[OxF]=0;
+    registers[0xF]=0;
   }
-   register[Vx] = sum & 0xFFu;
+   registers[Vx] = sum & 0xFFu;
 }
 void Chip8::OP_8xy5(){
   uint8_t Vx=(opcode & 0x0F00) >> 8u;
   uint8_t Vy=(opcode & 0x00F0) >> 4u;
    
-  if(register[Vx] > register[Vy]){
-    register[VF]=1;
+  if(registers[Vx] > register[Vy]){
+    registers[VF]=1;
   }
   else{
-    register[VF]=0;
+    registers[VF]=0;
   }
-  register[Vx] -= register[Vy]
+  registers[Vx] -= register[Vy]
 }
 void Chip8::OP_8xy6(){
   uint8_t Vx=(opcode & 0x0F00) >> 8u;
   
-  register[VF] = register[Vx] & 0x0001u; //to find the lsb because the shift operation destroys it
-  register[Vx] >>=1u;
+  registers[VF] = register[Vx] & 0x0001u; //to find the lsb because the shift operation destroys it
+  registers[Vx] >>=1u;
 }
 
 void Chip8::OP_8xy7(){
   uint8_t Vx=(opcode & 0x0f00) >> 8u;
   uint8_t Vy=(opcode & 0x00f0) >> 4u;
    
-  if(register[Vy] > register[Vx]){
-    register[VF]=1;
+  if(registers[Vy] > register[Vx]){
+    registers[VF]=1;
   }
   else{
-    register[VF] = 0;
+    registers[VF] = 0;
   }
-  register[Vx] = register[Vy] - register[Vy];
+  registers[Vx] = register[Vy] - register[Vy];
 }
 void Chip8::OP_8xyE(){
   uint8_t Vx=(opcode & 0x0f00) >> 8u;
-  register[VF] =  opcode & 0x1000; // storing msb 
+  registers[VF] =  opcode & 0x1000; // storing msb 
   
-  register[Vx] <<=2; //left shift 
+  registers[Vx] <<=2; //left shift 
 }
 void Chip8::OP_9xy0(){
   uint8_t Vx=(opcode & 0x0f00) >> 8u;
   uint8_t Vy= (opcode & 0x0f00) >> 4u;
 
-  if(register[Vx] != register[Vy]){
+  if(registers[Vx] != register[Vy]){
     pc += 2;
   }
 }
@@ -179,26 +232,26 @@ void Chip8::OP_Annn(){
  uint16_t address = opcode & 0x0FFFu // last 12 bits 
  index=addresss; 
 }
-void Chip8::Bnnn(){
+void Chip8::OP_Bnnn(){
 uint16_t Hello=opcode & 0x0FFFu; //HELLO IS ADDRESS I WAS BORED
-pc=register[0]+hello;
+pc=registers[0]+hello;
 }
 void Chip8::OP_Cxkk()
 {
 	uint8_t Vx = (opcode & 0x0F00u) >> 8u;
 	uint8_t byte = opcode & 0x00FFu;
 
-	registers[Vx] = randByte(randGen) & byte;
+	registerss[Vx] = randByte(randGen) & byte;
 }
 void Chip8::OP_Dxyn(){
 uint8_t Vx=(opcode & 0x0F00u) >> 8u;
 uint8_t Vy=(opcode & 0x00F0u) >> 4u;
-uint8_t height = opcode & 0x000Fu; //video_width is 64 here 
+uint8_t height = opcode & 0x000Fu; //VIDEO_width is 64 here 
 
-uint8_t xPos=register[Vx] % VIDEO_WIDTH; //for out of boundary conditions
-uint8_t yPos=register[Vy] % VIDEO_HEIGHT; //yPos is where it starts drawing 
+uint8_t xPos=registers[Vx] % VIDEO_WIDTH; //for out of boundary conditions
+uint8_t yPos=registers[Vy] % VIDEO_HEIGHT; //yPos is where it starts drawing 
 
-register[0xF]=0; // 1 if collision of new sprite and sprite on displsy,otherwise 0 
+registers[0xF]=0; // 1 if collision of new sprite and sprite on displsy,otherwise 0 
     
   for(unsigned int row=0;row<height;row++){ //iterating through sprite rows 
      uint8_t spriteByte=memory[index+row]; //byte data of the row 
@@ -207,13 +260,13 @@ register[0xF]=0; // 1 if collision of new sprite and sprite on displsy,otherwise
        uint8_t spritePixel=spriteByte & (0x80u >> col); //extracts column one by one 
 
        //pointer to the current row and column we are in 
-       uint32_t* screenPixel=&video[(yPos+row)*VIDEO_WIDTH+(xPos+col)];
+       uint32_t* screenPixel=&VIDEO[(yPos+row)*VIDEO_WIDTH+(xPos+col)];
        
 
        if(spritePixel){ //spritePixel is on 
 
          if(*screenPixel == 0xFFFFFFFF){ // screenPixel is also on 
-           register[0xFu]=1; // collision condition 
+           registers[0xFu]=1; // collision condition 
          }
          *screenPixel ^= 0xFFFFFFFF; //spritepixel is just one bit (eg 100000000), screenpixel can only be either FFFFFFFF or 00000000. If spritePixel is 1,flip the screenpixel
                                    //xor makes it so if both are on it will display nothing 
@@ -223,59 +276,58 @@ register[0xF]=0; // 1 if collision of new sprite and sprite on displsy,otherwise
 } 
 void  Chip8::OP_Ex9E(){
   uint8_t Vx= (opcode & 0x0F00) >> 8u;
-  uint8_t key=register[Vx];
+  uint8_t key=registers[Vx];
 
   if[keypad[key]]{
     pc +=2;
   }
 }
-void Chip8::OP_ExA1{
+void Chip8::OP_ExA1(){
   uint8_t Vx= (opcode & 0x0F00u) >> 8u;
-  uint8_t key=register[vx];
+  uint8_t key=registers[vx];
   
   if(!keypad[key]){
     pc +=2;
   }
 }
-void Chip8::Fx07(){
+void Chip8::OP_Fx07(){
   uint8_t Vx = (opcode & 0x0F00u) >> 8u;
-  register[Vx] = delayTimer;
+  registers[Vx] = delayTimer;
 }
-void Chip8::Fx0A(){
+void Chip8::OP_Fx0A(){
      uint8_t Vx = (opcode & 0x0F00u) >> 8u;
      bool keypressed=false;
 
      for(int i=0; i<16; i++){
        if(keypad[i]){
-         register[Vx]=i;
+         registers[Vx]=i;
          keypressed = true;
          break;
        }
-     }
-     if(!kepressed){
+     } if(!kepressed){
        pc -= 2; //to wait for a key press 
      }
 }
 void OP_Fx15(){
   uint8_t Vx= (opcode & 0x0F00u) >> 8u;
-  delayTimer=register[Vx];
+  delayTimer=registers[Vx];
 }
 void OP_Fx18(){
   uint8_t Vx=(opcode & 0x0F00u) >> 8u;
-  soundTimer=register[Vx];
+  soundTimer=registers[Vx];
 }
 void OP_Fx1E(){
   uint8_t Vx=(opcode & 0x0F00u) >> 8u;
-  index += register[Vx];
+  index += registers[Vx];
 }
 void OP_Fx29(){
   uint8_t Vx=(opcode & 0x0F00u) >> 8u;
 
-  index=FONT_START_ADDRESS + 5*(register[Vx]) // fonts are 5 bytes each, index is now at the starting byte of the number in Vx  
+  index=FONT_START_ADDRESS + 5*(registers[Vx]) // fonts are 5 bytes each, index is now at the starting byte of the number in Vx  
 
 void OP_Fx33(){
   uint8_t Vx=(opcode & 0x0F00u) >> 8u;
-  int digit = register[Vx];
+  int digit = registers[Vx];
 
   memory[index+2] = digit%10;
   digit /= 10;
@@ -289,14 +341,14 @@ void OP_Fx33(){
 void OP_Fx55(){ 
   uint8_t Vx = (opcode & 0x0F00u) >> 8u;
   for(int i=0;i<=Vx;i++){
-    memory[index+0] = register[i];
+    memory[index+0] = registers[i];
   }
 }
 void OP_Fx65(){
    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
 
     for(int i=0;i<=Vx;i++){
-     register[i] = memory[index+i];
+     registers[i] = memory[index+i];
   }
 
 }
@@ -307,7 +359,7 @@ void Chip8::cycle(){
   opcode=(memory[pc] << 8u) | memory[pc+1]; //opcode is of 16 bytes  
   pc +=2;
 
-  ((*this).*(table[(opcode & OxF000u)>>12u]))(); //decodes and executes
+  ((*this).*(table[(opcode & 0xF000u)>>12u]))(); //decodes and executes
 
   if(delayTimer>0){ // decrement delayTimer if its already set
     --delayTimer;
