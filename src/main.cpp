@@ -1,4 +1,3 @@
-#include "../include/Chip8.h"
 #include<chrono>
 #include<cstdlib>
 #include<iostream>
