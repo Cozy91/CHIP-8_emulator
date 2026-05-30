@@ -24,8 +24,7 @@ This project emulates the CHIP-8 virtual machine from scratch, implementing its 
 
 ### IBM Logo
 
-![IBM Logo](screenshots/IBM logo.png)
-
+![IBM Logo](screenshots/ibm_logo.png)
 ### Pong
 
 ![Pong](screenshots/pong.png)
