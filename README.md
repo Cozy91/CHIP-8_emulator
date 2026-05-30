@@ -91,20 +91,6 @@ Example:
 * Tetris
 * Opcode Test ROMs
 
-## What I Learned
-
-Building this emulator helped me gain experience with:
-
-* Emulator architecture
-* CPU instruction decoding
-* Bitwise operations
-* Memory management
-* Function pointers
-* SDL3 rendering
-* Event handling
-* Debugging with GDB
-* Modern C++ development
-
 ## Future Improvements
 
 * Super CHIP-8 support
