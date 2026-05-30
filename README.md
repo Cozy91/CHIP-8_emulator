@@ -30,8 +30,7 @@ This project emulates the CHIP-8 virtual machine from scratch, implementing its 
 ![Pong Demo](media/pong.gif)
 
 ### Tetris
-
-![Tetris](screenshots/tetris.png)
+![Tetria Demo](media/tetris.gif)
 
 ## Controls
 
