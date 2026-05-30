@@ -16,20 +16,25 @@ Platform platform("CHIP-8 Emulator",VIDEO_WIDTH*videoScale,VIDEO_HEIGHT*videoSca
 Chip8 chip8;
 chip8.LoadRom(romFilename);
 
-int videoPitch = sizeof(chip8.VIDEO[0] * VIDEO_WIDTH); //basically to find the size of onerow or where the next row is located
+int videoPitch = sizeof(chip8.VIDEO[0]) * VIDEO_WIDTH; //basically to find the size of onerow or where the next row is located
 auto lastCycleTime=std::chrono::high_resolution_clock::now();
+auto lastTimerTime = std::chrono::high_resolution_clock::now();
 bool quit=false;
-
 while(!quit){
-  quit=platform.ProcessInput(chip8.keypad);
+  quit = platform.ProcessInput(chip8.keypad);
+  
+  auto currentTime = std::chrono::high_resolution_clock::now();
+  float dt = std::chrono::duration<float, std::chrono::milliseconds::period>(currentTime - lastCycleTime).count();
 
-  auto currentTime= std::chrono::high_resolution_clock::now();
-  float dt=std::chrono::duration<float,std::chrono::milliseconds::period>(currentTime - lastCycleTime).count(); // milliseconds passed between last cycle and now 
+  if(dt > cycleDelay){
+    lastCycleTime = currentTime;
+    chip8.cycle();
+    platform.update(chip8.VIDEO, videoPitch);
+  }
 
-if(dt>cycleDelay){
-  lastCycleTime=currentTime; // updates the time to the time when last cycle completed its execution
-  chip8.cycle();
-  platform.update(chip8.VIDEO,videoPitch);
- }
+  if(std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastTimerTime).count() >= 16){
+    lastTimerTime = currentTime;
+    chip8.UpdateTimers();
+  }
 }
  } 

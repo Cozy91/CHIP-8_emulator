@@ -1,4 +1,5 @@
 #include<cstdint>
+#include<iostream>
 #include<chrono>
 #include<random>
 #include <SDL3/SDL.h>
@@ -53,7 +54,7 @@ class Chip8
 Chip8Func table0[0xEu +1]; //000E and 00EE
 Chip8Func table8[0xEu +1]; // opcodes starting from 8xy
 Chip8Func tableE[0xEu +1]; // opcode with Ex
-Chip8Func tableF[065u +1]; // opcodes starting with F, they end with 07,0A . . . goes upto max 65 so array has 65+
+Chip8Func tableF[0x65u +1]; // opcodes starting with F, they end with 07,0A . . . goes upto max 65 so array has 65+
 
 
     void Table0();
@@ -63,6 +64,7 @@ Chip8Func tableF[065u +1]; // opcodes starting with F, they end with 07,0A . . .
   
     void OP_NULL();
     void cycle();
+    void UpdateTimers();
         void LoadRom(const char* filename);
 
   
@@ -242,7 +244,7 @@ class Platform
 Platform(char const* title,int windowWidth,int windowHeight,int textureWidth,int textureHeight){
   SDL_Init(SDL_INIT_VIDEO); //initialising video flag
 
-  window=SDL_CreateWindow(title,windowWidth,windowHeight,SDL_WINDOW_FULLSCREEN); //window
+  window=SDL_CreateWindow(title,windowWidth,windowHeight,0); //window
 
   renderer=SDL_CreateRenderer(window,nullptr); //chooses best renderer for the system automatically
   texture=SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888,SDL_TEXTUREACCESS_STREAMING,textureWidth,textureHeight);
@@ -271,6 +273,7 @@ bool ProcessInput(uint8_t* keys){
         break;
   
     case SDL_EVENT_KEY_DOWN:
+      std::cout << "DOWN: " << event.key.key << '\n';
         switch(event.key.key){
           
 						case SDLK_ESCAPE:

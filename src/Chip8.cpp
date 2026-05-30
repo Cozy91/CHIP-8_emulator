@@ -1,4 +1,5 @@
 #include<fstream>
+#include<iostream>
 #include "../include/Chip8.h"
 #include<chrono>
 #include<cstdlib>
@@ -21,7 +22,7 @@ void Chip8::LoadRom(char const* filename){
     for(long i=0;i<size;++i){
        memory[START_ADDRESS+i] = buffer[i];
      }
-     delete buffer;
+     delete[] buffer;
     }
 }
 Chip8::Chip8()
@@ -53,11 +54,11 @@ for(size_t i=0;i<=0xE;i++){
   tableE[i] = &Chip8::OP_NULL;
 }
 table0[0x0] = &Chip8::OP_00E0;
-table[0xE] =  &Chip8::OP_00EE;
+table0[0xE] =  &Chip8::OP_00EE;
 
 table8[0x0] = &Chip8::OP_8xy0;
 table8[0x1] = &Chip8::OP_8xy1;
-table8[0x2] = &Chip8::OP_8xy3;
+table8[0x2] = &Chip8::OP_8xy2;
 table8[0x3] = &Chip8::OP_8xy3;
 table8[0x4] = &Chip8::OP_8xy4;
 table8[0x5] = &Chip8::OP_8xy5;
@@ -100,8 +101,13 @@ void Chip8::Table8(){
 void Chip8::TableE(){
   ((*this).*tableE[opcode & 0x000Fu])();
 }
-void Chip8::TableF(){
-  ((*this).*tableE[opcode & 0x00FFu])();
+void Chip8::TableF()
+{
+    uint8_t idx = opcode & 0x00FFu;
+
+    std::cout << "F opcode: 0x" << std::hex << (int)idx << std::endl;
+
+    ((*this).*tableF[idx])();
 }
 
 void Chip8::OP_00E0()
@@ -114,7 +120,7 @@ void Chip8::OP_00EE(){
   pc=stack[sp];
 }
 void Chip8::OP_1nnn(){
-  uint16_t address = opcode & 0XFFFFu; // anything & 1111 = number itself,seperates the address to where the jump will be done to from the opcode
+  uint16_t address = opcode & 0X0FFFu; // anything & 1111 = number itself,seperates the address to where the jump will be done to from the opcode
   pc=address;
 }
 void Chip8::OP_2nnn(){
@@ -147,7 +153,7 @@ void Chip8::OP_5xy0(){
 }
 void Chip8::OP_6xkk(){
   uint8_t Vx= (opcode & 0x0F00U) >> 8u; // 0fuu to extract the s number 
-  uint8_t byte= opcode & 0x00FFu >> 4u;
+  uint8_t byte= opcode & 0x00FFu;
   
   registers[Vx] = byte;
 }
@@ -223,17 +229,17 @@ void Chip8::OP_8xy7(){
   else{
     registers[0xF] = 0;
   }
-  registers[Vx] = registers[Vy] - registers[Vy];
+  registers[Vx] = registers[Vy] - registers[Vx];
 }
 void Chip8::OP_8xyE(){
-  uint8_t Vx=(opcode & 0x0f00) >> 8u;
-  registers[0xF] =  opcode & 0x1000; // storing msb 
+  uint8_t Vx=(opcode & 0x0F00) >> 8u;
+  registers[0xF] =  opcode & 0x80u >> 7u; // storing msb 
   
-  registers[Vx] <<=2; //left shift 
+  registers[Vx] <<=1; //left shift 
 }
 void Chip8::OP_9xy0(){
-  uint8_t Vx=(opcode & 0x0f00) >> 8u;
-  uint8_t Vy= (opcode & 0x0f00) >> 4u;
+  uint8_t Vx=(opcode & 0x0F00) >> 8u;
+  uint8_t Vy= (opcode & 0x00F0) >> 4u;
 
   if(registers[Vx] != registers[Vy]){
     pc += 2;
@@ -267,6 +273,10 @@ registers[0xF]=0; // 1 if collision of new sprite and sprite on displsy,otherwis
   for(unsigned int row=0;row<height;row++){ //iterating through sprite rows 
      uint8_t spriteByte=memory[index+row]; //byte data of the row 
      for(unsigned int col=0;col<8;col++){
+
+        if ((xPos + col) >= VIDEO_WIDTH ||
+            (yPos + row) >= VIDEO_HEIGHT)
+            continue;
 
        uint8_t spritePixel=spriteByte & (0x80u >> col); //extracts column one by one 
 
@@ -334,7 +344,7 @@ void Chip8::OP_Fx1E(){
 void Chip8::OP_Fx29(){
   uint8_t Vx=(opcode & 0x0F00u) >> 8u;
 
-  index=START_ADDRESS + 5*(registers[Vx]); // fonts are 5 bytes each, index is now at the starting byte of the number in Vx  
+  index=0x50 + 5*(registers[Vx]); // fonts are 5 bytes each, index is now at the starting byte of the number in Vx  
 }
 void Chip8::OP_Fx33(){
   uint8_t Vx=(opcode & 0x0F00u) >> 8u;
@@ -352,7 +362,7 @@ void Chip8::OP_Fx33(){
 void Chip8::OP_Fx55(){ 
   uint8_t Vx = (opcode & 0x0F00u) >> 8u;
   for(int i=0;i<=Vx;i++){
-    memory[index+0] = registers[i];
+    memory[index+i] = registers[i];
   }
 }
 void Chip8::OP_Fx65(){
@@ -371,14 +381,20 @@ void Chip8::cycle(){
   pc +=2;
 
   ((*this).*(table[(opcode & 0xF000u)>>12u]))(); //decodes and executes
-
-  if(delaytimer>0){ // decrement delayTimer if its already set
-    --delaytimer;
   }
 
-  if(soundTimer>0){
-    --soundTimer;
-  }
+
+void Chip8::UpdateTimers(){
+
+static int count = 0;
+
+    count++;
+
+    if(count % 60 == 0)
+        std::cout << "1 second\n";
+if (delaytimer > 0)
+         --delaytimer;
+
+if (soundTimer > 0)
+        --soundTimer;
 }
-
-
