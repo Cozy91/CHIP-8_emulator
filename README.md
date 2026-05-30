@@ -25,9 +25,9 @@ This project emulates the CHIP-8 virtual machine from scratch, implementing its 
 ### IBM Logo
 
 ![IBM Logo](screenshots/ibm_logo.png)
-### Pong
+### Pong Demo
 
-![Pong](screenshots/pong.png)
+[Watch Pong Demo](media/pong.webm)
 
 ### Tetris
 
